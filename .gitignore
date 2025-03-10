@@ -1,2 +1,6 @@
 *.pyc
 *.pyo
+*.db
+
+# OS releated
+.DS_Store
