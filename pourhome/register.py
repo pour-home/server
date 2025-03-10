@@ -3,9 +3,17 @@ from .service import db
 
 example_rules = [
     {
-        "if": {"moment": {"time": "18:30"}},
+        "if": {
+            "moment": {
+                "time": "18:30"
+            }
+        },
         "then": {
-            "telegram": {"sendmessage": {"text": "Ciao! Sono le {{moment.time}}"}}
+            "telegram": {
+                "sendmessage": {
+                    "text": "Ciao! Sono le {{moment.time}}"
+                }
+            }
         },
     }
 ]
@@ -17,7 +25,6 @@ class Register:
 
     @staticmethod
     def start():
-        print("Start")
         # Create an instance from database for each service and start it
         for name, service_model in Register.services.items():
             for service in service_model.select():
@@ -25,8 +32,7 @@ class Register:
 
     @staticmethod
     def stop():
-        for name, service in Register.services.items():
-            service.stop()
+        pass
 
     @staticmethod
     def new_service(service):
