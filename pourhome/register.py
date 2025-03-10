@@ -1,6 +1,3 @@
-from .service import db
-
-
 example_rules = [
     {
         "if": {
@@ -10,13 +7,20 @@ example_rules = [
         },
         "then": {
             "telegram": {
-                "sendmessage": {
-                    "text": "Ciao! Sono le {{moment.time}}"
+                "send_message": {
+                    "bot_id" : "1",
+                    "chat_id" : "437706966",
+                    "message": "Ciao! Sono le {moment-time}"
                 }
             }
         },
     }
 ]
+
+import json
+from peewee import *
+
+db = SqliteDatabase("pourhome.db")
 
 
 class Register:
@@ -24,11 +28,14 @@ class Register:
     services = {}
 
     @staticmethod
+    def db():
+        return db
+
+    @staticmethod
     def start():
         # Create an instance from database for each service and start it
-        for name, service_model in Register.services.items():
-            for service in service_model.select():
-                service.start()
+        for _, service in Register.services.items():
+            service.start()
 
     @staticmethod
     def stop():
@@ -36,8 +43,7 @@ class Register:
 
     @staticmethod
     def new_service(service):
-        Register.services[service.name] = service
-        db.create_tables([service])
+        Register.services[service.name] = service()
 
     @staticmethod
     def execute_rule():
@@ -52,9 +58,17 @@ class Register:
                 rule_value = example_rule["if"][service_name][event]
                 if event_value == rule_value:
                     # THEN
-                    for service, parameters in example_rule["then"].items():
-                        # Register.services[service]
-                        print("Rule executed!")
+                    extras = {
+                        f"{service_name}-{event}" : f"{event_value}"
+                    }
+                    for service_name, action_bundle in example_rule["then"].items():
+                        # Get the service
+                        service = Register.services[service_name]
+                        for action, parameters in action_bundle.items():
+                            # Template substitution
+                            for parameter, value in parameters.items():
+                                parameters[parameter] = value.format_map(extras)
+                        service.then(action, parameters)
             except KeyError:
                 # not found
                 pass

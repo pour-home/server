@@ -1,10 +1,7 @@
-from peewee import *
 import threading
 
-db = SqliteDatabase("pourhome.db")
 
-
-class Service(Model):
+class Service():
 
     def start(self):
         self._process = threading.Thread(target=self.event)
@@ -15,6 +12,3 @@ class Service(Model):
 
     def event(self):
         print("event")
-
-    class Meta:
-        database = db
