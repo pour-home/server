@@ -4,9 +4,11 @@ from .bot import TelegramBot
 
 class TelegramService(Service):
 
-    apiurl = ""
     name = "telegram"
 
+    def __init__(self):
+        pass
+    
     def _get_bot_from_id(self, bot_id):
         bots = TelegramBot.select().where(TelegramBot.id==bot_id)
         if bots:

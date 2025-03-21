@@ -17,7 +17,6 @@ example_rules = [
     }
 ]
 
-import json
 from peewee import *
 
 db = SqliteDatabase("pourhome.db")
